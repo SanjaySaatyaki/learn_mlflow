@@ -56,13 +56,19 @@ if __name__ == "__main__":
     # exp = mlflow.get_experiment(exp_id)
     # print(exp)
 
-    exp = mlflow.set_experiment("experiment_2")
+    exp = mlflow.set_experiment("experiment_auto_log")
     print(exp)
 
     with mlflow.start_run(experiment_id=exp.experiment_id,run_name="run_1"):
         lr = ElasticNet(alpha=alpha, l1_ratio=l1_ratio, random_state=42)
+        
+        mlflow.sklearn.autolog(
+            log_input_examples=True
+        )
+        
         lr.fit(train_x, train_y)
-
+        
+        
         predicted_qualities = lr.predict(test_x)
 
         (rmse, mae, r2) = eval_metrics(test_y, predicted_qualities)
@@ -72,23 +78,9 @@ if __name__ == "__main__":
         print("  MAE: %s" % mae)
         print("  R2: %s" % r2)
 
-        mlflow.log_param("alpha",alpha)
-        mlflow.log_param("l1_ratio",l1_ratio)
 
-        # mlflow.log_params({"alpha":alpha,"l1_ration":l1_ratio})
-        mlflow.log_metric("rmse",rmse)
-        mlflow.log_metric("mae",mae)
-        mlflow.log_metric("r2",r2)
-
-        # mlflow.log_metrics({"rmse":rmse,"mae":mae,"r2":r2})
-        run = mlflow.active_run()
-        mlflow.log_artifact("tracking_components\\red-wine-quality.csv")
-        mlflow.log_artifacts("data/")
-
-        print(mlflow.get_artifact_uri())
-        print("Active run info is", run.info)
-
-        mlflow.sklearn.log_model(lr,"reg_model")
+        
+        
     
     ls_run = mlflow.last_active_run()
     print(ls_run.info)
