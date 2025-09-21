@@ -55,7 +55,7 @@ if __name__ == "__main__":
     #                                   artifact_location=Path.cwd().joinpath("test_artifacts").as_uri())
     # exp = mlflow.get_experiment(exp_id)
     # print(exp)
-
+    mlflow.set_tracking_uri(uri="http://127.0.0.1:5000")
     exp = mlflow.set_experiment("experiment_2")
     print(exp)
 
